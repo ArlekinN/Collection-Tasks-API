@@ -1,0 +1,287 @@
+openapi: 3.0.3
+info:
+  title: Collection of tasks
+  version: 1.1.0
+servers:
+- url: /
+paths:
+  /tasks:
+    get:
+      tags:
+      - Tasks
+      summary: Get a task list
+      description: Returns all tasks
+      operationId: get_all_tasks
+      responses:
+        "200":
+          description: Task list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+                x-content-type: application/json
+      x-openapi-router-controller: swagger_server.controllers.tasks_controller
+    post:
+      tags:
+      - Tasks
+      summary: Create a new task
+      operationId: create_task
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/DTOTask'
+      responses:
+        "200":
+          description: The task was successfully moderated
+        "400":
+          description: Data not provided correctly
+      x-openapi-router-controller: swagger_server.controllers.tasks_controller
+  /tasks/{idTask}:
+    get:
+      tags:
+      - Tasks
+      summary: Find task by ID
+      description: Returns a single task
+      operationId: get_task_by_id
+      parameters:
+      - name: idTask
+        in: path
+        description: id task to be returned
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Task not found
+      x-openapi-router-controller: swagger_server.controllers.tasks_controller
+    put:
+      tags:
+      - Tasks
+      summary: Update task
+      operationId: update_task
+      parameters:
+      - name: idTask
+        in: path
+        description: id task that need to be update
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: Update an existent task
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Task'
+      responses:
+        default:
+          description: successful operation
+      x-openapi-router-controller: swagger_server.controllers.tasks_controller
+    delete:
+      tags:
+      - Tasks
+      summary: Delete a task
+      operationId: delete_task
+      parameters:
+      - name: idTask
+        in: path
+        description: id task to be deleted
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Removal was successful
+        "400":
+          description: Invalid ID value
+      x-openapi-router-controller: swagger_server.controllers.tasks_controller
+  /task/answer/{idTask}:
+    get:
+      tags:
+      - Answer
+      summary: Find answer to task by ID
+      description: Returns answer to task
+      operationId: get_answer_to_task_by_id
+      parameters:
+      - name: idTask
+        in: path
+        description: id task whose response is returned
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnswerTask'
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Task not found
+      x-openapi-router-controller: swagger_server.controllers.answer_controller
+    put:
+      tags:
+      - Answer
+      summary: Update task answer
+      operationId: update_task_answer
+      parameters:
+      - name: idTask
+        in: path
+        description: id task whose answer needs to be updated
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnswerTask'
+      responses:
+        "404":
+          description: Task not found
+        default:
+          description: Successful operation
+      x-openapi-router-controller: swagger_server.controllers.answer_controller
+  /task/answer/:
+    post:
+      tags:
+      - Answer
+      summary: Send verification response
+      operationId: send_answer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/AnswerTask'
+      responses:
+        "200":
+          description: OK
+      x-openapi-router-controller: swagger_server.controllers.answer_controller
+  /section:
+    get:
+      tags:
+      - Section
+      summary: Get a section list
+      description: Returns all section
+      operationId: get_all_section
+      responses:
+        "200":
+          description: Section list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Section'
+                x-content-type: application/json
+      x-openapi-router-controller: swagger_server.controllers.section_controller
+components:
+  schemas:
+    Section:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Уникальный идентификатор раздела
+        name:
+          type: string
+          description: Название раздела
+      example:
+        id: "1"
+        name: математика
+    Task:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Уникальный идентификатор задачи
+        name:
+          type: string
+          description: Название задачи
+        section:
+          $ref: '#/components/schemas/Section'
+        complexity:
+          type: string
+          description: Уровень сложности задачи
+          enum:
+          - very easy
+          - easy
+          - medium
+          - difficult
+          - very difficult
+        description:
+          type: string
+          description: Описание задачи
+      example:
+        id: "1"
+        name: Семь колец
+        section:
+          id: "1"
+          name: математика
+        complexity: very easy
+        description: описание задачи
+    AnswerTask:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Уникальный идентификатор задачи
+        answer:
+          type: string
+          description: Ответ на задачу
+      example:
+        id: "1"
+        answer: "5"
+    DTOTask:
+      required:
+      - answer
+      - description
+      - name
+      - section
+      type: object
+      properties:
+        name:
+          type: string
+          description: Название задачи
+        section:
+          $ref: '#/components/schemas/Section'
+        description:
+          type: string
+          description: Описание задачи
+        answer:
+          type: string
+          description: Ответ на задачу
+      example:
+        name: Химичексий фокус
+        section:
+          id: "2"
+          name: химия
+        description: описание задачи
+        answer: O2
+
