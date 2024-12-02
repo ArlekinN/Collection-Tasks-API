@@ -1,10 +1,10 @@
 import connexion
 import six
-
+from prometheus_client import Counter
 from swagger_server.models.dto_task import DTOTask  # noqa: E501
 from swagger_server.models.task import Task  # noqa: E501
 from swagger_server import util
-
+from swagger_server.metrics import REQUEST_COUNT
 
 def create_task(body=None):  # noqa: E501
     """Create a new task
@@ -73,3 +73,41 @@ def update_task(id_task, body=None):  # noqa: E501
     if connexion.request.is_json:
         body = Task.from_dict(connexion.request.get_json())  # noqa: E501
     return 'do some magic!'
+
+
+# Данные для задачи (Task)
+tasks = [
+    {
+        "id": "1",
+        "name": "Семь колец",
+        "section": {
+            "id": "1",
+            "name": "математика"
+        },
+        "complexity": "very easy",
+        "description": "описание задачи"
+    },
+    {
+        "id": "2",
+        "name": "Математическая головоломка",
+        "section": {
+            "id": "1",
+            "name": "математика"
+        },
+        "complexity": "easy",
+        "description": "Задача средней сложности"
+    },
+    # Добавьте другие задачи по аналогии
+]
+
+
+def get_all_tasks():
+    # Увеличиваем счетчик запросов
+    REQUEST_COUNT.labels(method='GET', endpoint='/tasks').inc()
+
+    # Возвращаем задачи
+    return tasks, 200
+
+
+
+
