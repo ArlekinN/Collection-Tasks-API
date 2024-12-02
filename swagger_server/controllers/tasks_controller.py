@@ -4,14 +4,14 @@ from prometheus_client import Counter
 from swagger_server.models.dto_task import DTOTask  # noqa: E501
 from swagger_server.models.task import Task  # noqa: E501
 from swagger_server import util
-from swagger_server.metrics import REQUEST_COUNT
+from swagger_server.metrics import REQUEST_COUNT_TASKS
 
 def create_task(body=None):  # noqa: E501
     """Create a new task
 
      # noqa: E501
 
-    :param body: 
+    :param body:
     :type body: list | bytes
 
     :rtype: None
@@ -33,16 +33,6 @@ def delete_task(id_task):  # noqa: E501
     """
     return 'do some magic!'
 
-
-def get_all_tasks():  # noqa: E501
-    """Get a task list
-
-    Returns all tasks # noqa: E501
-
-
-    :rtype: List[Task]
-    """
-    return 'do some magic!'
 
 
 def get_task_by_id(id_task):  # noqa: E501
@@ -103,7 +93,7 @@ tasks = [
 
 def get_all_tasks():
     # Увеличиваем счетчик запросов
-    REQUEST_COUNT.labels(method='GET', endpoint='/tasks').inc()
+    REQUEST_COUNT_TASKS.labels(method='GET', endpoint='/tasks').inc()
 
     # Возвращаем задачи
     return tasks, 200

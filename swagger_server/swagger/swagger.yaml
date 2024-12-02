@@ -189,7 +189,7 @@ paths:
       - Section
       summary: Get a section list
       description: Returns all section
-      operationId: get_all_section
+      operationId: get_all_sections
       responses:
         "200":
           description: Section list

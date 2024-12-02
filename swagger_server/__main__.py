@@ -5,7 +5,7 @@ from prometheus_client import generate_latest
 from flask import Response
 from swagger_server import encoder
 
-from swagger_server.metrics import REQUEST_COUNT
+
 
 def main():
     app = connexion.App(__name__, specification_dir='./swagger/')
