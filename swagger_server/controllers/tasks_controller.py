@@ -65,7 +65,6 @@ def update_task(id_task, body=None):  # noqa: E501
     return 'do some magic!'
 
 
-# Данные для задачи (Task)
 tasks = [
     {
         "id": "1",
@@ -87,15 +86,12 @@ tasks = [
         "complexity": "easy",
         "description": "Задача средней сложности"
     },
-    # Добавьте другие задачи по аналогии
 ]
 
 
 def get_all_tasks():
-    # Увеличиваем счетчик запросов
     REQUEST_COUNT_TASKS.labels(method='GET', endpoint='/tasks').inc()
 
-    # Возвращаем задачи
     return tasks, 200
 
 
