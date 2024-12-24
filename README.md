@@ -21,6 +21,9 @@ http://localhost:8080/ui/
 ![image](https://github.com/user-attachments/assets/10ea6443-a481-4939-ac37-2837adc0dd5d)
 ![image](https://github.com/user-attachments/assets/c2c5c415-6ad8-405c-8908-35c603e09b5c)
 
+Логи:
+![image](https://github.com/user-attachments/assets/9555e147-72af-451c-b008-1c779b0242ac)
+
 
 
 
