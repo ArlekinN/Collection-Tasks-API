@@ -25,7 +25,7 @@ var/
 *.egg
 
 # Игнорировать папку temp
-promtail/temp/
+promtail/tmp/
 
 # Игнорировать все .exe файлы в папке promtail
 promtail/*.exe
