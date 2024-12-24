@@ -1,4 +1,5 @@
 from swagger_server.metrics import REQUEST_COUNT_SECTION
+import logging
 
 sections = [
     {
@@ -12,5 +13,10 @@ sections = [
 ]
 
 def get_all_sections():
-    REQUEST_COUNT_SECTION.labels(method='GET', endpoint='/section').inc()
-    return sections, 200
+    logging.info("Processed request to /section.")
+    try:
+        REQUEST_COUNT_SECTION.labels(method='GET', endpoint='/section').inc()
+        response = sections, 200
+    except Exception as e:
+        logging.error(f"Error processing request to /section: {e}")
+    return response

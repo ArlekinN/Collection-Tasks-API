@@ -5,6 +5,7 @@ from swagger_server.models.dto_task import DTOTask  # noqa: E501
 from swagger_server.models.task import Task  # noqa: E501
 from swagger_server import util
 from swagger_server.metrics import REQUEST_COUNT_TASKS
+import logging
 
 def create_task(body=None):  # noqa: E501
     """Create a new task
@@ -90,9 +91,15 @@ tasks = [
 
 
 def get_all_tasks():
-    REQUEST_COUNT_TASKS.labels(method='GET', endpoint='/tasks').inc()
+    logging.info("Processed request to /tasks.")
+    try:
+        REQUEST_COUNT_TASKS.labels(method='GET', endpoint='/tasks').inc()
+        response = tasks, 200
+    except Exception as e:
+        logging.error(f"Error processing request to /tasks: {e}")
 
-    return tasks, 200
+
+    return response
 
 
 
