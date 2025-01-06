@@ -28,7 +28,7 @@ http://localhost:3000
 Логи:
 ![image](https://github.com/user-attachments/assets/9555e147-72af-451c-b008-1c779b0242ac)
 
-Тресы:
+Трейсы:
 ![image](https://github.com/user-attachments/assets/869926d9-cc60-4e41-ac6e-3ee9c4cd9c73)
 
 
