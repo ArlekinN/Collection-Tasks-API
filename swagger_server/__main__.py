@@ -1,39 +1,114 @@
 #!/usr/bin/env python3
 
 import connexion
-from prometheus_client import generate_latest
-from flask import Response
+from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
+from flask import Response, request
 from swagger_server import encoder
+import random
+import time
 import logging
-import os
+import requests
+from logging.handlers import HTTPHandler
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+from opentelemetry.instrumentation.flask import FlaskInstrumentor
+from swagger_server.controllers.section_controller import get_all_sections
+from swagger_server.controllers.tasks_controller import get_all_tasks
 
-# Определение пути для логов
-log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
-os.makedirs(log_dir, exist_ok=True)  # Создаем папку logs, если она не существует
-log_file = os.path.join(log_dir, 'app.log')
-if os.path.exists(log_file):
-    os.remove(log_file)
+app = connexion.App(__name__, specification_dir='./swagger/')
+# Метрики Prometheus
+REQUEST_COUNT = Counter('request_count', 'Общее количество запросов',
+                        ['method', 'endpoint', 'http_status'])
+REQUEST_LATENCY = Histogram('request_latency_seconds', 'Время обработки запроса',
+                            ['method', 'endpoint'])
+ERROR_COUNT = Counter('error_count', 'Количество ошибок', ['method', 'endpoint', 'http_status'])
 
-# Настройка логирования
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler(log_file),  # Логи сохраняются в файл
-        logging.StreamHandler()         # Логи выводятся в консоль
-    ]
-)
+
+
+
+
+trace.set_tracer_provider(TracerProvider())
+tracer = trace.get_tracer_provider().get_tracer(__name__)
+otlp_exporter = OTLPSpanExporter(endpoint="http://tempo:4317", insecure=True)
+span_processor = BatchSpanProcessor(otlp_exporter)
+trace.get_tracer_provider().add_span_processor(span_processor)
+
+FlaskInstrumentor().instrument_app(app.app)
+
+class LokiHandler(HTTPHandler):
+    def __init__(self, url):
+        self.url = url
+        super().__init__(host='', url=url, method='POST')
+
+    def emit(self, record):
+        log_entry = self.format(record)
+        payload = {
+            "streams": [
+                {
+                    "stream": {"job": "flask-api", "level": record.levelname},
+                    "values": [[str(int(time.time() * 1000000000)), log_entry]]
+                }
+            ]
+        }
+        try:
+            response = requests.post(self.url, json=payload)
+            response.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            app.app.logger.error(f"Failed to send log entry to Loki: {e}")
+
+loki_url = "http://loki:3100/loki/api/v1/push"
+
+loki_handler = LokiHandler(loki_url)
+loki_handler.setLevel(logging.INFO)
+loki_formatter = logging.Formatter('%(asctime)s - %(message)s')
+loki_handler.setFormatter(loki_formatter)
+app.app.logger.addHandler(loki_handler)
+app.app.logger.setLevel(logging.INFO)
+
+@app.app.route("/trace-example")
+def trace_example():
+    with tracer.start_as_current_span("example-span"):
+        time.sleep(random.uniform(0.1, 0.5))
+        return "Trace example dood!"
+    
+@app.app.route('/metrics')
+def metrics():
+    return generate_latest(), 200, {'Content-Type': CONTENT_TYPE_LATEST}
+
+@app.app.route('/sections')
+def sections_route():
+    return get_all_sections()
+
+@app.app.route('/tasks')
+def tasks_route():
+    return get_all_tasks()
+
+def start_timer():
+    request.start_time = time.time()
+
+def record_metrics(response):
+    REQUEST_COUNT.labels(method=request.method, endpoint=request.path, http_status=response.status_code).inc()
+
+    if hasattr(request, 'start_time'):
+        latency = time.time() - request.start_time
+        latency_histogram = REQUEST_LATENCY.labels(method=request.method, endpoint=request.path)
+        latency_histogram.observe(latency)
+
+    if response.status_code >= 400:
+        ERROR_COUNT.labels(method=request.method, endpoint=request.path, http_status=response.status_code).inc()
+        app.app.logger.error(f"Request {request.method} to {request.path} failed with status {response.status_code}")
+    else:
+        app.app.logger.info(f"Request {request.method} to {request.path} succeeded with status {response.status_code}")
+
+    return response
 
 def main():
-    logging.info("The application is running on port 8080")
-    app = connexion.App(__name__, specification_dir='./swagger/')
     app.app.json_encoder = encoder.JSONEncoder
     app.add_api('swagger.yaml', arguments={'title': 'Collection of tasks'}, pythonic_params=True)
-
-    @app.route('/metrics')
-    def metrics():
-        logging.info("Query to /metrics")
-        return Response(generate_latest(), mimetype='text/plain')
+    app.app.before_request(start_timer)
+    app.app.after_request(record_metrics)
 
     app.run(port=8080)
 

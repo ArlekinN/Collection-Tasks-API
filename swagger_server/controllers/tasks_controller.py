@@ -1,11 +1,11 @@
 import connexion
 import six
 from prometheus_client import Counter
-from swagger_server.models.dto_task import DTOTask  # noqa: E501
-from swagger_server.models.task import Task  # noqa: E501
+from swagger_server.models.dto_task import DTOTask
+from swagger_server.models.task import Task 
 from swagger_server import util
 from swagger_server.metrics import REQUEST_COUNT_TASKS
-import logging
+from flask import jsonify
 
 def create_task(body=None):  # noqa: E501
     """Create a new task
@@ -91,16 +91,7 @@ tasks = [
 
 
 def get_all_tasks():
-    logging.info("Processed request to /tasks.")
-    try:
-        REQUEST_COUNT_TASKS.labels(method='GET', endpoint='/tasks').inc()
-        response = tasks, 200
-    except Exception as e:
-        logging.error(f"Error processing request to /tasks: {e}")
-
-
-    return response
-
-
+    REQUEST_COUNT_TASKS.labels(method='GET', endpoint='/tasks').inc()
+    return jsonify(tasks), 200
 
 

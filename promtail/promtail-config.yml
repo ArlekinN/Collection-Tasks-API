@@ -1,9 +1,9 @@
 server:
-  http_listen_port: 9080  
+  http_listen_port: 9080
   grpc_listen_port: 0
 
 clients:
-  - url: http://localhost:3100/loki/api/v1/push  # Loki API для отправки логов
+  - url: http://loki:3100/loki/api/v1/push
 
 positions:
   filename: /tmp/positions.yaml
@@ -12,7 +12,8 @@ scrape_configs:
   - job_name: my-app-logs
     static_configs:
       - targets:
-          - localhost  # Хост
+          - localhost
         labels:
-          job: logs
-          __path__: ../swagger_server/logs/*.log  # Путь к лог-файлу
+          job: flask-logs
+          __path__: /var/log/*.log
+
