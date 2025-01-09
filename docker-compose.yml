@@ -12,9 +12,10 @@ services:
       - prometheus
       - tempo
     logging:
-      driver: "loki"
+      driver: "json-file"
       options:
-        loki-url: "http://loki:3100/loki/api/v1/push"
+        max-size: "10m"
+        max-file: "3"
 
   prometheus:
     image: prom/prometheus:latest
@@ -35,8 +36,6 @@ services:
     volumes:
       - grafana-data:/var/lib/grafana
     restart: always
-    depends_on:
-      - loki
 
   loki:
     image: grafana/loki:latest

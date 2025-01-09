@@ -63,14 +63,8 @@ jobs:
 
       - name: Set up Docker Compose
         run: |
-          curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-          chmod +x /usr/local/bin/docker-compose
-          docker-compose --version 
+          curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" 
 
-      - name: Install Loki Docker plugin
-        run: |
-          docker plugin install grafana/loki-docker-driver:latest --grant-all-permissions
-          
       - name: Run docker-compose
         run: |
           docker-compose up --build -d
