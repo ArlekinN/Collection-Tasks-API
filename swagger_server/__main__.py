@@ -25,10 +25,6 @@ REQUEST_LATENCY = Histogram('request_latency_seconds', 'Время обрабо�
                             ['method', 'endpoint'])
 ERROR_COUNT = Counter('error_count', 'Количество ошибок', ['method', 'endpoint', 'http_status'])
 
-
-
-
-
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer_provider().get_tracer(__name__)
 otlp_exporter = OTLPSpanExporter(endpoint="http://tempo:4317", insecure=True)
@@ -73,45 +69,46 @@ def trace_example():
         time.sleep(random.uniform(0.1, 0.5))
         return "Trace example dood!"
     
+
 @app.app.route('/metrics')
 def metrics():
     return generate_latest(), 200, {'Content-Type': CONTENT_TYPE_LATEST}
+
 
 @app.app.route('/sections')
 def sections_route():
     return get_all_sections()
 
+
 @app.app.route('/tasks')
 def tasks_route():
     return get_all_tasks()
 
+
 def start_timer():
     request.start_time = time.time()
 
+
 def record_metrics(response):
     REQUEST_COUNT.labels(method=request.method, endpoint=request.path, http_status=response.status_code).inc()
-
     if hasattr(request, 'start_time'):
         latency = time.time() - request.start_time
         latency_histogram = REQUEST_LATENCY.labels(method=request.method, endpoint=request.path)
         latency_histogram.observe(latency)
-
     if response.status_code >= 400:
         ERROR_COUNT.labels(method=request.method, endpoint=request.path, http_status=response.status_code).inc()
         app.app.logger.error(f"Request {request.method} to {request.path} failed with status {response.status_code}")
     else:
         app.app.logger.info(f"Request {request.method} to {request.path} succeeded with status {response.status_code}")
-
     return response
+
 
 def main():
     app.app.json_encoder = encoder.JSONEncoder
     app.add_api('swagger.yaml', arguments={'title': 'Collection of tasks'}, pythonic_params=True)
     app.app.before_request(start_timer)
     app.app.after_request(record_metrics)
-
     app.run(port=8080)
-
 
 
 if __name__ == '__main__':
