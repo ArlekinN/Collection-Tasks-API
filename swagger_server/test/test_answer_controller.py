@@ -3,7 +3,6 @@
 from __future__ import absolute_import
 
 from flask import json
-from six import BytesIO
 
 from swagger_server.models.answer_task import AnswerTask  # noqa: E501
 from swagger_server.test import BaseTestCase

@@ -15,7 +15,7 @@ class DTOTask(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, name: str=None, section: Section=None, description: str=None, answer: str=None):  # noqa: E501
+    def __init__(self, name: str = None, section: Section=None, description: str = None, answer: str = None):
         """DTOTask - a model defined in Swagger
 
         :param name: The name of this DTOTask.  # noqa: E501

@@ -15,7 +15,7 @@ class Task(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, id: str=None, name: str=None, section: Section=None, complexity: str=None, description: str=None):  # noqa: E501
+    def __init__(self, id: str = None, name: str = None, section: Section = None, complexity: str = None, description: str = None):  # noqa: E501
         """Task - a model defined in Swagger
 
         :param id: The id of this Task.  # noqa: E501

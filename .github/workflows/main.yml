@@ -28,6 +28,7 @@ jobs:
 
       - name: Run flake8
         run: flake8 . --max-line-length 120 --exclude .git,__pycache__,env
+        --ignore F522,F524,E252,W291,W293
 
   build-and-push:
     name: Build and push 

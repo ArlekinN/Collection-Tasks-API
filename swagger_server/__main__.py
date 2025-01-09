@@ -2,7 +2,7 @@
 
 import connexion
 from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
-from flask import Response, request
+from flask import request
 from swagger_server import encoder
 import random
 import time
@@ -33,6 +33,7 @@ trace.get_tracer_provider().add_span_processor(span_processor)
 
 FlaskInstrumentor().instrument_app(app.app)
 
+
 class LokiHandler(HTTPHandler):
     def __init__(self, url):
         self.url = url
@@ -54,6 +55,7 @@ class LokiHandler(HTTPHandler):
         except requests.exceptions.RequestException as e:
             app.app.logger.error(f"Failed to send log entry to Loki: {e}")
 
+
 loki_url = "http://loki:3100/loki/api/v1/push"
 
 loki_handler = LokiHandler(loki_url)
@@ -62,6 +64,7 @@ loki_formatter = logging.Formatter('%(asctime)s - %(message)s')
 loki_handler.setFormatter(loki_formatter)
 app.app.logger.addHandler(loki_handler)
 app.app.logger.setLevel(logging.INFO)
+
 
 @app.app.route("/trace-example")
 def trace_example():
