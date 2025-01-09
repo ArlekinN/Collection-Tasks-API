@@ -35,6 +35,8 @@ services:
     volumes:
       - grafana-data:/var/lib/grafana
     restart: always
+    depends_on:
+      - loki
 
   loki:
     image: grafana/loki:latest
