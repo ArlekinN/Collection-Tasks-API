@@ -1,8 +1,3 @@
-import connexion
-
-from swagger_server.models.answer_task import AnswerTask  
-
-
 def get_answer_to_task_by_id(id_task):
     """Find answer to task by ID
 

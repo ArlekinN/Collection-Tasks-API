@@ -1,6 +1,3 @@
-import connexion
-from swagger_server.models.dto_task import DTOTask
-from swagger_server.models.task import Task 
 from swagger_server.metrics import REQUEST_COUNT_TASKS
 from flask import jsonify
 

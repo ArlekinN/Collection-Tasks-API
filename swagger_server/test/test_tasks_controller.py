@@ -3,7 +3,6 @@
 from __future__ import absolute_import
 
 from flask import json
-from six import BytesIO
 
 from swagger_server.models.dto_task import DTOTask  # noqa: E501
 from swagger_server.models.task import Task  # noqa: E501

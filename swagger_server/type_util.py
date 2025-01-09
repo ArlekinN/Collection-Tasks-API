@@ -3,7 +3,6 @@ from typing import GenericMeta
 import sys
 
 if sys.version_info < (3, 7):
-    import typing
 
     def is_generic(klass):
         """ Determine whether klass is a generic class """
