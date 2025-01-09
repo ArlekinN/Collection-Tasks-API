@@ -1,13 +1,11 @@
 import connexion
-import six
-from prometheus_client import Counter
 from swagger_server.models.dto_task import DTOTask
 from swagger_server.models.task import Task 
-from swagger_server import util
 from swagger_server.metrics import REQUEST_COUNT_TASKS
 from flask import jsonify
 
-def create_task(body=None):  # noqa: E501
+
+def create_task(body=None):  
     """Create a new task
 
      # noqa: E501
@@ -17,12 +15,10 @@ def create_task(body=None):  # noqa: E501
 
     :rtype: None
     """
-    if connexion.request.is_json:
-        body = [DTOTask.from_dict(d) for d in connexion.request.get_json()]  # noqa: E501
     return 'do some magic!'
 
 
-def delete_task(id_task):  # noqa: E501
+def delete_task(id_task): 
     """Delete a task
 
      # noqa: E501
@@ -35,8 +31,7 @@ def delete_task(id_task):  # noqa: E501
     return 'do some magic!'
 
 
-
-def get_task_by_id(id_task):  # noqa: E501
+def get_task_by_id(id_task):  
     """Find task by ID
 
     Returns a single task # noqa: E501
@@ -49,7 +44,7 @@ def get_task_by_id(id_task):  # noqa: E501
     return 'do some magic!'
 
 
-def update_task(id_task, body=None):  # noqa: E501
+def update_task(id_task, body=None):  
     """Update task
 
      # noqa: E501
@@ -61,8 +56,6 @@ def update_task(id_task, body=None):  # noqa: E501
 
     :rtype: None
     """
-    if connexion.request.is_json:
-        body = Task.from_dict(connexion.request.get_json())  # noqa: E501
     return 'do some magic!'
 
 
@@ -93,5 +86,3 @@ tasks = [
 def get_all_tasks():
     REQUEST_COUNT_TASKS.labels(method='GET', endpoint='/tasks').inc()
     return jsonify(tasks), 200
-
-

@@ -14,7 +14,7 @@ class Section(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, id: str=None, name: str=None):  # noqa: E501
+    def __init__(self, id: str = None, name: str = None):  # noqa: E501
         """Section - a model defined in Swagger
 
         :param id: The id of this Section.  # noqa: E501

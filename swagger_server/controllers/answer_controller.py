@@ -1,11 +1,9 @@
 import connexion
-import six
 
-from swagger_server.models.answer_task import AnswerTask  # noqa: E501
-from swagger_server import util
+from swagger_server.models.answer_task import AnswerTask  
 
 
-def get_answer_to_task_by_id(id_task):  # noqa: E501
+def get_answer_to_task_by_id(id_task):
     """Find answer to task by ID
 
     Returns answer to task # noqa: E501
@@ -18,7 +16,7 @@ def get_answer_to_task_by_id(id_task):  # noqa: E501
     return 'do some magic!'
 
 
-def send_answer(body=None):  # noqa: E501
+def send_answer(body=None):
     """Send verification response
 
      # noqa: E501
@@ -28,12 +26,10 @@ def send_answer(body=None):  # noqa: E501
 
     :rtype: None
     """
-    if connexion.request.is_json:
-        body = [AnswerTask.from_dict(d) for d in connexion.request.get_json()]  # noqa: E501
     return 'do some magic!'
 
 
-def update_task_answer(id_task, body=None):  # noqa: E501
+def update_task_answer(id_task, body=None):
     """Update task answer
 
      # noqa: E501
@@ -45,6 +41,4 @@ def update_task_answer(id_task, body=None):  # noqa: E501
 
     :rtype: None
     """
-    if connexion.request.is_json:
-        body = AnswerTask.from_dict(connexion.request.get_json())  # noqa: E501
     return 'do some magic!'

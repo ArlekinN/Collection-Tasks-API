@@ -14,7 +14,7 @@ class AnswerTask(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, id: str=None, answer: str=None):  # noqa: E501
+    def __init__(self, id: str = None, answer: str = None):  # noqa: E501
         """AnswerTask - a model defined in Swagger
 
         :param id: The id of this AnswerTask.  # noqa: E501
