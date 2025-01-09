@@ -1,13 +1,17 @@
-OpenAPI спецификация коллекции задач из разных областей и разной сложности
+# OpenAPI спецификация коллекции задач из разных областей и разной сложности
 Запуск:
 ```
-pip3 install -r requirements.txt
-python -m swagger_server
+docker-compose up --build
 ```
 
-Ссылка:
+Ссылки: <br>
+Спецификация
 ```
 http://localhost:8080/ui/
+```
+Grafana
+```
+http://localhost:3000
 ```
 
 ![image](https://github.com/user-attachments/assets/2fb9ac7b-47f3-4928-837c-c27f42563649)
@@ -23,6 +27,9 @@ http://localhost:8080/ui/
 
 Логи:
 ![image](https://github.com/user-attachments/assets/9555e147-72af-451c-b008-1c779b0242ac)
+
+Трейсы:
+![image](https://github.com/user-attachments/assets/869926d9-cc60-4e41-ac6e-3ee9c4cd9c73)
 
 
 
